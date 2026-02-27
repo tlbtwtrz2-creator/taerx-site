@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>السحب</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{background:#0f1116;color:white;padding:20px;max-width:520px;margin:auto;}
+
+.title{
+text-align:center;
+font-size:24px;
+color:#ff4d4d;
+margin-bottom:25px;
+}
+
+/* ===== صندوق RGB ===== */
+.box{
+position:relative;
+border-radius:25px;
+padding:3px;
+background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,violet,red);
+background-size:400%;
+animation:rgbSnake 10s linear infinite;
+}
+
+@keyframes rgbSnake{
+0%{background-position:0% 50%;}
+100%{background-position:400% 50%;}
+}
+
+.box-content{
+background:#1a1f27;
+border-radius:22px;
+padding:25px;
+}
+
+.balance{
+text-align:center;
+margin-bottom:15px;
+color:#ff5252;
+font-weight:bold;
+}
+
+.select-btn{
+background:#2a2f38;
+padding:15px;
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:15px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.select-btn:hover{
+transform:translateY(-2px);
+}
+
+.select-btn img{
+width:22px;
+height:22px;
+border-radius:50%;
+margin-left:8px;
+}
+
+input{
+width:100%;
+padding:13px;
+margin-bottom:14px;
+border-radius:14px;
+border:none;
+background:#2a2f38;
+color:white;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:16px;
+background:linear-gradient(45deg,#7b1fa2,#ba68c8,#9c27b0);
+color:white;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:translateY(-2px);
+}
+
+/* ===== Modals ===== */
+.modal{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.85);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.modal-content{
+background:#1a1f27;
+width:92%;
+max-width:420px;
+border-radius:20px;
+padding:10px;
+max-height:80vh;
+overflow-y:auto;
+}
+
+.modal-item{
+display:flex;
+align-items:center;
+padding:12px;
+border-bottom:1px solid #333;
+cursor:pointer;
+}
+
+.modal-item:hover{
+background:#2a2f38;
+}
+
+.modal-item img{
+width:26px;
+height:26px;
+border-radius:50%;
+margin-left:8px;
+}
+
+.close{
+text-align:center;
+padding:14px;
+cursor:pointer;
+color:#ccc;
+}
+
+/* ===== Alert Pro ===== */
+.alert-box{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:10000;
+}
+
+.alert-content{
+background:linear-gradient(145deg,#2a0000,#4d0000);
+padding:25px;
+border-radius:20px;
+width:90%;
+max-width:350px;
+text-align:center;
+border:2px solid #ff0000;
+box-shadow:0 0 40px red;
+animation:popIn 0.3s ease;
+}
+
+.alert-title{
+font-size:18px;
+color:#ff4d4d;
+margin-bottom:10px;
+font-weight:bold;
+}
+
+@keyframes popIn{
+from{transform:scale(0.8);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-6px);}
+50%{transform:translateX(6px);}
+75%{transform:translateX(-6px);}
+100%{transform:translateX(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="title">السحب</div>
+
+<div class="box">
+<div class="box-content">
+
+<div class="balance">الرصيد الحالي: 0</div>
+
+<div class="select-btn" onclick="openCrypto()">
+<div id="selectedCrypto">اختر العملة</div>
+</div>
+
+<div class="select-btn" onclick="openNetwork()">
+<div id="selectedNetwork">اختر الشبكة</div>
+</div>
+
+<input type="text" id="address" placeholder="عنوان المحفظة">
+<input type="number" id="amount" placeholder="مبلغ السحب">
+
+<button onclick="withdraw()">تأكيد السحب</button>
+
+</div>
+</div>
+
+<!-- قائمة العملات -->
+<div class="modal" id="cryptoModal">
+<div class="modal-content" id="cryptoList"></div>
+</div>
+
+<!-- قائمة الشبكات -->
+<div class="modal" id="networkModal">
+<div class="modal-content" id="networkList"></div>
+</div>
+
+<!-- Alert -->
+<div class="alert-box" id="alertBox">
+  <div class="alert-content" id="alertContent">
+    <div class="alert-title">⚠ تنبيه</div>
+    <div id="alertMessage"></div>
+  </div>
+</div>
+
+<audio id="alertSound">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-system-beep-buzzer-fail-2964.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+const cryptos=[
+["Bitcoin","bitcoin-btc-logo.png"],
+["Ethereum","ethereum-eth-logo.png"],
+["USDT","tether-usdt-logo.png"],
+["USDC","usd-coin-usdc-logo.png"],
+["BNB","bnb-bnb-logo.png"],
+["Solana","solana-sol-logo.png"],
+["XRP","xrp-xrp-logo.png"],
+["Dogecoin","dogecoin-doge-logo.png"],
+["Litecoin","litecoin-ltc-logo.png"],
+["Polygon","polygon-matic-logo.png"],
+["Avalanche","avalanche-avax-logo.png"],
+["Tron","tron-trx-logo.png"],
+["Cardano","cardano-ada-logo.png"],
+["Polkadot","polkadot-new-dot-logo.png"],
+["Chainlink","chainlink-link-logo.png"],
+["Arbitrum","arbitrum-arb-logo.png"],
+["Optimism","optimism-ethereum-op-logo.png"],
+["Shiba Inu","shiba-inu-shib-logo.png"],
+["Toncoin","toncoin-ton-logo.png"],
+["Cosmos","cosmos-atom-logo.png"]
+];
+
+const networks=[
+["TRC20","tron-trx-logo.png"],
+["ERC20","ethereum-eth-logo.png"],
+["BEP20","bnb-bnb-logo.png"],
+["Polygon","polygon-matic-logo.png"],
+["Arbitrum","arbitrum-arb-logo.png"],
+["Optimism","optimism-ethereum-op-logo.png"],
+["Solana","solana-sol-logo.png"],
+["Avalanche","avalanche-avax-logo.png"]
+];
+
+let selectedCrypto="";
+let selectedNetwork="";
+
+function openCrypto(){
+let list=document.getElementById("cryptoList");
+list.innerHTML="";
+cryptos.forEach(c=>{
+list.innerHTML+=`
+<div class="modal-item" onclick="selectCrypto('${c[0]}','${c[1]}')">
+<img src="https://cryptologos.cc/logos/${c[1]}"> ${c[0]}
+</div>`;
+});
+list.innerHTML+='<div class="close" onclick="closeCrypto()">رجوع</div>';
+document.getElementById("cryptoModal").style.display="flex";
+}
+
+function openNetwork(){
+let list=document.getElementById("networkList");
+list.innerHTML="";
+networks.forEach(n=>{
+list.innerHTML+=`
+<div class="modal-item" onclick="selectNetwork('${n[0]}','${n[1]}')">
+<img src="https://cryptologos.cc/logos/${n[1]}"> ${n[0]}
+</div>`;
+});
+list.innerHTML+='<div class="close" onclick="closeNetwork()">رجوع</div>';
+document.getElementById("networkModal").style.display="flex";
+}
+
+function closeCrypto(){document.getElementById("cryptoModal").style.display="none";}
+function closeNetwork(){document.getElementById("networkModal").style.display="none";}
+
+function selectCrypto(name,icon){
+selectedCrypto=name;
+document.getElementById("selectedCrypto").innerHTML=
+'<img src="https://cryptologos.cc/logos/'+icon+'"> '+name;
+closeCrypto();
+}
+
+function selectNetwork(name,icon){
+selectedNetwork=name;
+document.getElementById("selectedNetwork").innerHTML=
+'<img src="https://cryptologos.cc/logos/'+icon+'"> '+name;
+closeNetwork();
+}
+
+function showAlert(message){
+let box=document.getElementById("alertBox");
+let content=document.getElementById("alertContent");
+document.getElementById("alertMessage").innerText=message;
+box.style.display="flex";
+content.style.animation="shake 0.3s";
+document.getElementById("alertSound").play();
+setTimeout(()=>{box.style.display="none";},3000);
+}
+
+function withdraw(){
+if(!selectedCrypto){showAlert("اختر العملة");return;}
+if(!selectedNetwork){showAlert("اختر الشبكة");return;}
+if(document.getElementById("address").value.length<10){showAlert("ادخل عنوان صحيح");return;}
+if(document.getElementById("amount").value<=0){showAlert("ادخل مبلغ صحيح");return;}
+showAlert("الرصيد غير كافي");
+}
+
+</script>
+
+</body>
+</html>
