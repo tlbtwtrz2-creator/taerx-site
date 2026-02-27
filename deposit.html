@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra Deposit</title>
+
+<style>
+*{box-sizing:border-box;}
+
+input[type="number"]{
+appearance:none;
+-webkit-appearance:none;
+-moz-appearance:textfield;
+}
+
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:radial-gradient(circle at 20% 20%,#1f2937,#0f172a 60%);
+color:white;
+display:flex;
+justify-content:center;
+padding:20px;
+overflow-x:hidden;
+}
+
+body::before{
+content:"";
+position:fixed;
+width:200%;
+height:200%;
+background:linear-gradient(45deg,#00ffff22,#ff00ff22,#00ff8822);
+animation:rotateBg 18s linear infinite;
+z-index:-1;
+}
+
+@keyframes rotateBg{
+0%{transform:rotate(0deg)}
+100%{transform:rotate(360deg)}
+}
+
+.container{
+width:100%;
+max-width:420px;
+position:relative;
+}
+
+/* 🔙 زر الرجوع */
+.back-btn{
+position:absolute;
+top:-18px;
+left:-18px;
+width:52px;
+height:52px;
+border-radius:50%;
+border:none;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#00c6ff,#0072ff);
+box-shadow:0 0 20px rgba(0,255,255,0.8);
+transition:.3s;
+z-index:10;
+}
+
+.back-btn:hover{
+transform:scale(1.15);
+box-shadow:0 0 35px rgba(0,255,255,1);
+}
+
+.back-btn svg{
+width:26px;
+height:26px;
+fill:white;
+}
+
+.rgb-border{
+padding:3px;
+border-radius:28px;
+background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,purple,red);
+background-size:400%;
+animation:snake 8s linear infinite;
+margin-top:40px;
+}
+
+@keyframes snake{
+0%{background-position:0%}
+100%{background-position:400%}
+}
+
+.card{
+background:rgba(20,25,40,0.92);
+border-radius:25px;
+padding:28px;
+box-shadow:0 25px 60px rgba(0,0,0,0.7);
+}
+
+.title{
+text-align:center;
+font-size:22px;
+margin-bottom:20px;
+font-weight:bold;
+}
+
+.select,.input{
+width:100%;
+padding:14px 16px;
+border:none;
+border-radius:14px;
+margin-bottom:12px;
+background:rgba(255,255,255,0.12);
+color:white;
+font-size:14px;
+outline:none;
+display:block;
+}
+
+.note{
+text-align:center;
+font-size:12px;
+color:#ffd54f;
+margin-bottom:14px;
+}
+
+.button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:18px;
+background:linear-gradient(90deg,#00c6ff,#0072ff);
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.tx-id{
+background:rgba(255,255,255,0.1);
+padding:8px 12px;
+border-radius:12px;
+font-size:11px;
+text-align:center;
+margin-bottom:12px;
+color:#00ffff;
+word-break:break-all;
+}
+
+.payment-box{
+background:#1f2937;
+padding:18px;
+border-radius:18px;
+margin-bottom:15px;
+text-align:center;
+}
+
+.payment-box img{
+width:60px;
+height:60px;
+border-radius:50%;
+margin-bottom:12px;
+}
+
+.coin-network{
+font-size:16px;
+font-weight:bold;
+margin-bottom:6px;
+}
+
+.amount-display{
+font-size:18px;
+font-weight:bold;
+color:#ffd54f;
+}
+
+.timer{
+font-size:15px;
+margin-bottom:10px;
+color:#ffd54f;
+text-align:center;
+}
+
+.timer-warning{
+color:#ff3b3b;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
+
+.qr{
+background:white;
+padding:16px;
+border-radius:20px;
+display:flex;
+justify-content:center;
+margin:15px 0;
+}
+
+.qr img{width:200px;}
+
+.notice-box{
+background:linear-gradient(135deg,#facc15,#eab308);
+color:#1f2937;
+padding:12px;
+border-radius:14px;
+font-size:12px;
+font-weight:600;
+text-align:center;
+margin:12px 0 16px 0;
+}
+
+.address{
+background:rgba(255,255,255,0.12);
+padding:10px;
+border-radius:10px;
+font-size:12px;
+word-break:break-all;
+margin-bottom:10px;
+}
+
+.copy-btn{
+width:100%;
+padding:10px;
+border:none;
+border-radius:14px;
+background:#00bcd4;
+color:black;
+font-weight:bold;
+margin-bottom:10px;
+cursor:pointer;
+}
+
+#errorBox{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+background:#ff3b3b;
+padding:12px 20px;
+border-radius:12px;
+display:none;
+}
+
+#depositPage{display:none;}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<button class="back-btn" onclick="goHome()">
+<svg viewBox="0 0 24 24">
+<path d="M15 18l-6-6 6-6"/>
+</svg>
+</button>
+
+<div class="rgb-border">
+<div class="card">
+
+<div id="setupPage">
+<div class="title">إعداد الإيداع</div>
+
+<select class="select" id="coin" onchange="updateNetworks()">
+<option value="">اختر العملة</option>
+<option value="USDT">USDT</option>
+<option value="BTC">BTC</option>
+<option value="ETH">ETH</option>
+<option value="TRX">TRX</option>
+<option value="USDC">USDC</option>
+<option value="KAS">KAS</option>
+</select>
+
+<select class="select" id="network"></select>
+
+<input type="number" class="input" id="amount" placeholder="أدخل مبلغ الشحن">
+<div class="note">الحد الأدنى 20$ — الحد الأقصى 10,000$</div>
+
+<button class="button" onclick="confirmDeposit()">تأكيد</button>
+</div>
+
+<div id="depositPage">
+<div class="title">تفاصيل الإيداع</div>
+<div class="tx-id" id="transactionId"></div>
+<div class="payment-box" id="paymentBox"></div>
+<div class="timer" id="timer"></div>
+<div class="qr"><img id="qrImage"></div>
+<div class="notice-box">
+⚡ يتم إيداع الرصيد تلقائياً بعد اكتمال تأكيدات الشبكة (عادة 2–10 دقائق).
+</div>
+<div class="address" id="address"></div>
+<button class="copy-btn" onclick="copyAddress()">نسخ العنوان</button>
+<button class="button" onclick="goBack()">رجوع</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="errorBox"></div>
+
+<script>
+let timerInterval;
+const usedTransactionIds=new Set();
+
+const coinLogos={
+USDT:"https://cryptologos.cc/logos/tether-usdt-logo.png",
+BTC:"https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+ETH:"https://cryptologos.cc/logos/ethereum-eth-logo.png",
+TRX:"https://cryptologos.cc/logos/tron-trx-logo.png",
+USDC:"https://cryptologos.cc/logos/usd-coin-usdc-logo.png",
+KAS:"https://cryptologos.cc/logos/kaspa-kas-logo.png"
+};
+
+const data={
+USDT:{TRC20:"TDKiiVtTUXgq27DZvGFWrtHJvoCphh8WwD",BEP20:"0x4428018a7f868e9d7ce2f51ddb17ff946fbce7cd",ERC20:"0x4428018a7f868e9d7ce2f51ddb17ff946fbce7cd"},
+BTC:{BTC:"3JZJ6z43mSZbJsik7LqSRq3zgC4jruUwEx"},
+ETH:{ERC20:"0x4428018a7f868e9d7ce2f51ddb17ff946fbce7cd"},
+TRX:{TRC20:"TQKGfXBZipcBULB2j25cjiLX6sCmniCxun"},
+USDC:{ERC20:"0x4428018a7f868e9d7ce2f51ddb17ff946fbce7cd"},
+KAS:{KAS:"kaspa:qrt302ak5pfafzgpu2fakt5ntzwp8ww9nuvyk3fkaxr4d9l47fua62xngwxak"}
+};
+
+function goHome(){window.location.href="home.html";}
+
+function generateTransactionId(coin){
+let now=new Date();
+let y=now.getFullYear().toString().slice(-2);
+let m=(now.getMonth()+1).toString().padStart(2,'0');
+let d=now.getDate().toString().padStart(2,'0');
+let h=now.getHours().toString().padStart(2,'0');
+let min=now.getMinutes().toString().padStart(2,'0');
+let s=now.getSeconds().toString().padStart(2,'0');
+let r=Math.floor(Math.random()*9000)+1000;
+let id=coin+"-"+y+m+d+h+min+s+r;
+while(usedTransactionIds.has(id)){
+r=Math.floor(Math.random()*9000)+1000;
+id=coin+"-"+y+m+d+h+min+s+r;
+}
+usedTransactionIds.add(id);
+return id;
+}
+
+function updateNetworks(){
+let coin=document.getElementById("coin").value;
+let networkSelect=document.getElementById("network");
+networkSelect.innerHTML='<option value="">اختر الشبكة</option>';
+if(data[coin]){
+for(let net in data[coin]){
+let option=document.createElement("option");
+option.value=net;
+option.textContent=net;
+networkSelect.appendChild(option);
+}
+}
+}
+
+updateNetworks();
+
+function confirmDeposit(){
+let coin=document.getElementById("coin").value;
+let network=document.getElementById("network").value;
+let amount=parseFloat(document.getElementById("amount").value);
+
+if(!coin||!network||isNaN(amount)){showError("يرجى إكمال جميع الحقول");return;}
+if(!data[coin]||!data[coin][network]){showError("الشبكة غير متطابقة");return;}
+if(amount<20){showError("أقل مبلغ هو 20 دولار");return;}
+if(amount>10000){showError("الحد الأقصى 10,000 دولار");return;}
+
+clearInterval(timerInterval);
+
+let txId=generateTransactionId(coin);
+document.getElementById("transactionId").innerText="رقم الطلب: "+txId;
+
+document.getElementById("paymentBox").innerHTML=
+'<img src="'+coinLogos[coin]+'">'+
+'<div class="coin-network">'+coin+'--'+network+'</div>'+
+'<div class="amount-display">'+amount+'$</div>';
+
+document.getElementById("address").innerText=data[coin][network];
+document.getElementById("qrImage").src=
+"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data="+encodeURIComponent(data[coin][network]);
+
+startTimer();
+
+document.getElementById("setupPage").style.display="none";
+document.getElementById("depositPage").style.display="block";
+}
+
+function startTimer(){
+let totalSeconds=600;
+clearInterval(timerInterval);
+timerInterval=setInterval(()=>{
+let m=Math.floor(totalSeconds/60);
+let s=totalSeconds%60;
+let timer=document.getElementById("timer");
+timer.innerText="صلاحية الطلب: "+m.toString().padStart(2,'0')+":"+s.toString().padStart(2,'0');
+if(totalSeconds<=60){timer.classList.add("timer-warning");}
+totalSeconds--;
+if(totalSeconds<0){clearInterval(timerInterval);}
+},1000);
+}
+
+function copyAddress(){
+navigator.clipboard.writeText(document.getElementById("address").innerText);
+}
+
+function goBack(){
+document.getElementById("depositPage").style.display="none";
+document.getElementById("setupPage").style.display="block";
+clearInterval(timerInterval);
+}
+
+function showError(msg){
+let box=document.getElementById("errorBox");
+box.innerText=msg;
+box.style.display="block";
+setTimeout(()=>{box.style.display="none";},3000);
+}
+</script>
+
+</body>
+</html>
