@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elite VIP System</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{background:#000;color:white;}
+.container{padding:20px;}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.lang-btn{
+padding:8px 15px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:linear-gradient(45deg,#7b1fa2,#ba68c8);
+color:white;
+font-weight:bold;
+box-shadow:0 0 15px #ba68c8;
+}
+
+.balance-box{
+background:linear-gradient(145deg,#111,#1a1a1a);
+padding:15px;
+border-radius:15px;
+margin-bottom:30px;
+font-size:18px;
+border:1px solid #333;
+box-shadow:0 0 20px rgba(255,255,255,0.1);
+}
+
+/* RGB Snake Border */
+.vip-card{
+position:relative;
+padding:3px;
+border-radius:30px;
+background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,violet,red);
+background-size:400%;
+animation:snake 12s linear infinite;
+margin-bottom:30px;
+}
+
+@keyframes snake{
+0%{background-position:0% 50%;}
+100%{background-position:400% 50%;}
+}
+
+.vip-inner{
+padding:30px;
+border-radius:28px;
+}
+
+/* مستويات مختلفة */
+.vip1 .vip-inner{background:linear-gradient(145deg,#1e1e1e,#111);}
+.vip2 .vip-inner{background:linear-gradient(145deg,#1a0033,#32004d);box-shadow:0 0 20px #7b1fa2;}
+.vip3 .vip-inner{background:linear-gradient(145deg,#002b36,#001f27);box-shadow:0 0 25px #00acc1;}
+.vip4 .vip-inner{background:linear-gradient(145deg,#1a1a00,#333300);box-shadow:0 0 25px #ffd600;}
+.vip5 .vip-inner{background:linear-gradient(145deg,#001a0f,#003322);box-shadow:0 0 30px #00e676;}
+.vip6 .vip-inner{background:linear-gradient(145deg,#1a001a,#330033);box-shadow:0 0 35px #ba68c8;}
+.vip7 .vip-inner{
+background:linear-gradient(145deg,#1a1a1a,#000);
+border:2px solid #d4af37;
+box-shadow:0 0 45px rgba(212,175,55,0.9);
+}
+
+/* VIP 8 أسطوري */
+.vip8 .vip-inner{
+background:linear-gradient(145deg,#000,#1a0033);
+border:2px solid gold;
+box-shadow:0 0 80px gold;
+animation:glow 2s infinite alternate;
+}
+
+@keyframes glow{
+from{box-shadow:0 0 50px gold;}
+to{box-shadow:0 0 120px gold;}
+}
+
+.vip-level{
+font-size:22px;
+font-weight:bold;
+margin-bottom:12px;
+color:#f5d76e;
+}
+
+.vip-details{
+font-size:15px;
+line-height:2.2;
+}
+
+.net-profit{
+color:#00ff99;
+font-weight:bold;
+margin-top:10px;
+font-size:16px;
+}
+
+/* أزرار فخمة */
+.activate-btn{
+margin-top:20px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:16px;
+cursor:pointer;
+font-weight:bold;
+font-size:15px;
+background:linear-gradient(45deg,#7b1fa2,#ba68c8,#9c27b0);
+color:white;
+box-shadow:0 0 20px #ba68c8;
+transition:0.3s;
+}
+
+.activate-btn:hover{
+transform:scale(1.08);
+box-shadow:0 0 30px #d500f9;
+}
+
+/* Popup */
+.popup{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.85);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+.popup-box{
+background:#111;
+padding:30px;
+border-radius:25px;
+width:90%;
+max-width:420px;
+text-align:center;
+border:2px solid #ba68c8;
+box-shadow:0 0 40px #ba68c8;
+}
+
+.popup-title{
+font-size:20px;
+margin-bottom:15px;
+color:#f5d76e;
+}
+
+.deposit-now{
+margin-top:15px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#00c853;
+color:white;
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
+box-shadow:0 0 20px #00e676;
+}
+
+.close-btn{
+margin-top:15px;
+background:#d50000;
+padding:16px;
+width:100%;
+border:none;
+border-radius:14px;
+color:white;
+cursor:pointer;
+font-size:18px;
+font-weight:bold;
+}
+
+.footer{
+text-align:center;
+margin-top:40px;
+font-size:12px;
+color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="top-bar">
+<h2 id="titleText">🔥 قائمة VIP 🔥</h2>
+<button class="lang-btn" onclick="toggleLang()">EN</button>
+</div>
+
+<div class="balance-box" id="balanceText">
+الرصيد الحالي: 0 $
+</div>
+
+<div id="vipContainer"></div>
+
+<div class="footer">Elite VIP System © 2026</div>
+
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popup">
+<div class="popup-box">
+<div class="popup-title" id="popupTitle"></div>
+<div id="popupDetails" style="margin-bottom:15px;"></div>
+<button class="deposit-now" id="depositNowBtn">قم بالإيداع الآن</button>
+<button class="close-btn" onclick="closePopup()">✖ إغلاق</button>
+</div>
+</div>
+
+<script>
+
+let currentLang="ar";
+
+const vipData=[
+{level:1,price:50,daily:12,monthly:360,net:310},
+{level:2,price:150,daily:40,monthly:1200,net:1050},
+{level:3,price:300,daily:100,monthly:3000,net:2700},
+{level:4,price:600,daily:250,monthly:7500,net:6900},
+{level:5,price:1200,daily:600,monthly:18000,net:16800},
+{level:6,price:2500,daily:1500,monthly:45000,net:42500},
+{level:7,price:5000,daily:3500,monthly:105000,net:100000},
+{level:8,price:10000,daily:8000,monthly:240000,net:230000}
+];
+
+function renderVIP(){
+let container=document.getElementById("vipContainer");
+container.innerHTML="";
+
+vipData.forEach(v=>{
+let card=document.createElement("div");
+card.className="vip-card vip"+v.level;
+
+card.innerHTML=`
+<div class="vip-inner">
+<div class="vip-level">VIP ${v.level} — $${v.price}</div>
+<div class="vip-details">
+${currentLang==="ar"?
+`الربح اليومي: $${v.daily}<br>
+الإجمالي الشهري: $${v.monthly}
+<div class="net-profit">صافي الربح الشهري: $${v.net}</div>`:
+`Daily Profit: $${v.daily}<br>
+Monthly Total: $${v.monthly}
+<div class="net-profit">Net Monthly Profit: $${v.net}</div>`
+}
+</div>
+<button class="activate-btn" onclick="openPopup(${v.price}, ${v.level})">
+${currentLang==="ar"?"تفعيل VIP":"Activate VIP"}
+</button>
+</div>
+`;
+
+container.appendChild(card);
+});
+}
+
+function openPopup(price, level){
+let popup=document.getElementById("popup");
+let title=document.getElementById("popupTitle");
+let details=document.getElementById("popupDetails");
+
+if(currentLang==="ar"){
+title.innerText="تفعيل VIP " + level;
+details.innerHTML="المبلغ المطلوب:<br><strong style='color:#00ff99;font-size:18px;'>"+price+"$</strong>";
+}else{
+title.innerText="Activate VIP " + level;
+details.innerHTML="Required Amount:<br><strong style='color:#00ff99;font-size:18px;'>"+price+"$</strong>";
+}
+
+popup.style.display="flex";
+}
+
+function closePopup(){
+document.getElementById("popup").style.display="none";
+}
+
+document.getElementById("depositNowBtn").onclick=function(){
+window.location.href="deposit.html";
+};
+
+function toggleLang(){
+if(currentLang==="ar"){
+currentLang="en";
+document.documentElement.dir="ltr";
+document.getElementById("titleText").innerText="🔥 VIP Plans 🔥";
+document.getElementById("balanceText").innerText="Current Balance: 0 $";
+document.querySelector(".lang-btn").innerText="AR";
+}else{
+currentLang="ar";
+document.documentElement.dir="rtl";
+document.getElementById("titleText").innerText="🔥 قائمة VIP 🔥";
+document.getElementById("balanceText").innerText="الرصيد الحالي: 0 $";
+document.querySelector(".lang-btn").innerText="EN";
+}
+renderVIP();
+}
+
+renderVIP();
+
+</script>
+
+</body>
+</html>
