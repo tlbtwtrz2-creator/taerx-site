@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAERX PRO</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{min-height:100vh;background:#060a16;display:flex;justify-content:center;align-items:center;padding:20px;color:#fff}
+.card-wrapper{padding:3px;border-radius:32px;background:linear-gradient(90deg,#ff0000,#ffae00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000);background-size:400%;animation:snake 15s linear infinite;width:100%;max-width:430px}
+@keyframes snake{0%{background-position:0% 50%}100%{background-position:400% 50%}}
+.card{background:#0f172a;border-radius:30px;padding:35px 28px;width:100%}
+.brand{text-align:center;font-size:40px;font-weight:900;margin-bottom:25px;color:#ffae00}
+.tabs{display:flex;background:#1f2937;border-radius:16px;margin-bottom:25px;padding:4px}
+.tab{flex:1;text-align:center;padding:14px;cursor:pointer;color:#9ca3af;border-radius:12px;font-weight:600}
+.tab.active{background:linear-gradient(90deg,#7c3aed,#3b82f6);color:#fff}
+.input{width:100%;padding:16px;border-radius:14px;border:1px solid #374151;background:#1e293b;color:#fff;outline:none;margin-bottom:12px}
+.button{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(90deg,#7c3aed,#3b82f6);color:#fff;font-weight:bold;cursor:pointer;margin-top:10px}
+.link{text-align:center;color:#9ca3af;font-size:14px;margin-top:15px;cursor:pointer;text-decoration:underline;display:block}
+.warn{color:#ff4d4d;font-size:13px;display:none;margin-bottom:10px}
+#registerBox,#forgotBox{display:none}
+</style>
+</head>
+
+<body>
+
+<div class="card-wrapper">
+<div class="card">
+<div class="brand">TAERX</div>
+
+<div class="tabs">
+<div id="tabL" class="tab active">دخول</div>
+<div id="tabR" class="tab">تسجيل</div>
+</div>
+
+<div id="loginBox">
+<input type="email" id="lEmail" class="input" placeholder="البريد الإلكتروني">
+<input type="password" id="lPass" class="input" placeholder="كلمة المرور">
+<div id="lWarn" class="warn">بيانات غير صحيحة</div>
+<button id="btnLogin" class="button">دخول</button>
+<span class="link" id="btnForgot">نسيت كلمة المرور؟</span>
+</div>
+
+<div id="registerBox">
+<input type="text" id="rName" class="input" placeholder="الاسم الكامل">
+<input type="email" id="rEmail" class="input" placeholder="البريد الإلكتروني">
+<input type="password" id="rPass" class="input" placeholder="كلمة المرور">
+<input type="password" id="rCPass" class="input" placeholder="تأكيد كلمة المرور">
+<div id="rWarn" class="warn">تحقق من البيانات</div>
+<button id="btnReg" class="button">إنشاء حساب</button>
+<span class="link" id="backToLogin">العودة للدخول</span>
+</div>
+
+<div id="forgotBox">
+<input type="email" id="fEmail" class="input" placeholder="البريد الإلكتروني">
+<div id="fWarn" class="warn">البريد غير صحيح</div>
+<button id="btnReset" class="button">إرسال رابط الاستعادة</button>
+<span class="link" id="backToLogin2">رجوع</span>
+</div>
+
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig={
+apiKey:"AIzaSyBfpYreHYPSLytPpwCwXs57fq09Zb2XJc",
+authDomain:"taerx-81ac0.firebaseapp.com",
+projectId:"taerx-81ac0"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth();
+
+/* تبديل التبويبات */
+tabL.onclick=()=>{loginBox.style.display="block";registerBox.style.display="none";forgotBox.style.display="none";tabL.classList.add("active");tabR.classList.remove("active")}
+tabR.onclick=()=>{loginBox.style.display="none";registerBox.style.display="block";forgotBox.style.display="none";tabR.classList.add("active");tabL.classList.remove("active")}
+btnForgot.onclick=()=>{loginBox.style.display="none";forgotBox.style.display="block"}
+backToLogin.onclick=backToLogin2.onclick=()=>tabL.onclick()
+
+/* إنشاء حساب */
+btnReg.onclick=function(){
+const name=rName.value.trim()
+const email=rEmail.value.trim()
+const pass=rPass.value
+const cpass=rCPass.value
+
+if(name.length<3||pass.length<6||pass!==cpass){
+rWarn.style.display="block"
+return
+}
+
+this.innerText="جاري الإنشاء..."
+auth.createUserWithEmailAndPassword(email,pass)
+.then(()=>{window.location.href="home.html"})
+.catch(err=>{
+rWarn.innerText=err.message
+rWarn.style.display="block"
+this.innerText="إنشاء حساب"
+})
+}
+
+/* تسجيل دخول */
+btnLogin.onclick=function(){
+auth.signInWithEmailAndPassword(lEmail.value,lPass.value)
+.then(()=>window.location.href="home.html")
+.catch(()=>lWarn.style.display="block")
+}
+
+/* استعادة كلمة المرور */
+btnReset.onclick=function(){
+auth.sendPasswordResetEmail(fEmail.value)
+.then(()=>alert("تم إرسال الرابط"))
+.catch(()=>fWarn.style.display="block")
+}
+
+/* إذا مسجل مسبقاً يحوله */
+auth.onAuthStateChanged(user=>{
+if(user){window.location.href="home.html"}
+})
+</script>
+
+</body>
+</html>
