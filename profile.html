@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TAERX ELITE | ملف شخصي</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
+    <style>
+        :root { 
+            --bg: #030008; --accent: #7d2ae8; --gold: #ffcc00; --red: #ff3333;
+            --laser-border: rgba(125, 42, 232, 0.4);
+            --input-bg: rgba(255, 255, 255, 0.03);
+            --glass-bg: rgba(15, 2, 32, 0.95); 
+            --shine-color: rgba(255, 255, 255, 0.2);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background-color: var(--bg); color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #1a0b3c, #030008);
+            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
+        }
+
+        /* الهيدر الأسطواني الفخم */
+        .header-profile {
+            position: relative; height: 65px; padding: 0 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 10; background: var(--glass-bg); backdrop-filter: blur(25px) saturate(180%);
+            border-radius: 0 0 25px 25px; border-bottom: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); overflow: hidden; margin-bottom: 10px;
+        }
+
+        .header-profile::after {
+            content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, var(--shine-color), transparent);
+            transform: skewX(-25deg); animation: shineEffect 7s infinite ease-in-out;
+        }
+
+        @keyframes shineEffect { 0% { left: -150%; } 15% { left: 150%; } 100% { left: 150%; } }
+
+        .header-right, .header-left { flex: 1; display: flex; align-items: center; z-index: 2; }
+        .back-btn-elite { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 18px; cursor: pointer; transition: 0.3s; }
+        .header-title { flex: 2; text-align: center; font-weight: 900; font-size: 15px; color: #fff; }
+        .header-brand { font-weight: 900; font-size: 13px; color: var(--accent); flex: 1; text-align: left; }
+
+        .content-container { flex: 1; padding-bottom: 20px; }
+        .mini-info-bar { margin: 10px 20px; padding: 12px 20px; border-radius: 15px; background: var(--input-bg); border: 1px solid rgba(125, 42, 232, 0.2); display: flex; justify-content: space-between; align-items: center; }
+        .mini-info-bar .name-tag { font-size: 14px; font-weight: 900; color: #fff; }
+        .mini-info-bar .id-tag { font-size: 11px; color: var(--gold); font-weight: bold; }
+        
+        /* قسم الصورة الشخصية */
+        .avatar-section { display: flex; flex-direction: column; align-items: center; margin: 20px 0; position: relative; }
+        .profile-img-container { 
+            width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--gold); 
+            position: relative; background: #111; box-shadow: 0 0 25px rgba(125, 42, 232, 0.3);
+            display: flex; align-items: center; justify-content: center; overflow: visible;
+            cursor: pointer; user-select: none;
+        }
+        #profile-display { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none; }
+        #profile-default-icon { font-size: 65px; color: var(--gold); opacity: 0.9; }
+        
+        .cam-overlay { 
+            position: absolute; bottom: 2px; right: 2px; width: 42px; height: 42px; 
+            background: var(--accent); border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; border: 3px solid var(--bg); cursor: pointer; z-index: 10; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        /* --- زر حذف الصورة SVG الصغير والأنيق --- */
+        .delete-photo-btn {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 51, 51, 0.1);
+            border: 1px solid rgba(255, 51, 51, 0.3);
+            padding: 6px 12px;
+            border-radius: 10px;
+            color: var(--red);
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .delete-photo-btn:active { transform: scale(0.9); background: var(--red); color: #fff; }
+        .delete-photo-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+        .input-group { padding: 0 25px; margin-bottom: 12px; }
+        .input-label { font-size: 10px; color: var(--gold); font-weight: 900; margin-bottom: 5px; display: block; }
+        .elite-input-box { display: flex; align-items: center; background: var(--input-bg); border: 1px solid var(--laser-border); border-radius: 15px; overflow: hidden; }
+        .elite-input, .elite-select { flex: 1; background: transparent; border: none; padding: 14px; color: #fff; font-size: 15px; font-weight: 900; text-align: right; }
+        
+        .dob-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .elite-select { appearance: none; -webkit-appearance: none; background: var(--input-bg); border: 1px solid var(--laser-border); border-radius: 12px; padding: 10px; color: #fff; text-align: center; cursor: pointer; }
+
+        .copy-btn { background: var(--accent); color: #fff; border: none; padding: 0 20px; height: 50px; cursor: pointer; font-size: 12px; font-weight: 900; }
+        .save-container { padding: 20px 25px 40px; }
+        .save-btn { width: 100%; height: 60px; background: linear-gradient(90deg, #5019a0, var(--accent), #5019a0); background-size: 200% auto; color: #fff; border: none; border-radius: 18px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 25px rgba(125, 42, 232, 0.5); display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+        #cropper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 9999; }
+        .cropper-wrapper { flex: 1; position: relative; width: 100%; background: #000; overflow: hidden; }
+        .circle-mask { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; height: 280px; border-radius: 50%; box-shadow: 0 0 0 2000px rgba(0, 0, 0, 0.85); border: 2px solid #fff; pointer-events: none; z-index: 5; }
+        .crop-footer { height: 100px; padding: 0 20px; display: flex; justify-content: space-around; align-items: center; background: #000; }
+        .c-btn { background: none; border: none; color: #fff; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .cropper-view-box, .cropper-face { border-radius: 50%; outline: none !important; }
+        .cropper-line, .cropper-point, .cropper-modal, .cropper-dashed, .cropper-center { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header class="header-profile">
+        <div class="header-right"><div class="back-btn-elite" onclick="location.href='login.html'"><i class="fa-solid fa-chevron-right"></i></div></div>
+        <div class="header-title">ملف شخصي</div>
+        <div class="header-left"><div class="header-brand">TAERX</div></div>
+    </header>
+
+    <div class="content-container">
+        <div class="mini-info-bar">
+            <div class="name-tag" id="view-full-name">المتحدي الملكي</div>
+            <div class="id-tag">ID: 1758740</div>
+        </div>
+
+        <div class="avatar-section">
+            <div class="profile-img-container" id="long-press-area">
+                <i class="fa-solid fa-circle-user" id="profile-default-icon"></i>
+                <img id="profile-display" src="">
+                <label for="img-upload" class="cam-overlay"><i class="fa-solid fa-camera" style="color:#fff;"></i></label>
+                <input type="file" id="img-upload" hidden accept="image/*">
+            </div>
+            
+            <button class="delete-photo-btn" onclick="removePhoto()">
+                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                حذف الصورة
+            </button>
+            
+            <div style="color:rgba(255,255,255,0.4); font-size:9px; margin-top:5px;">اضغط مطولاً للخيارات</div>
+        </div>
+
+        <div class="input-group"><label class="input-label">الاسم الأول</label><div class="elite-input-box"><input type="text" id="first-name" class="elite-input" placeholder="الأول"></div></div>
+        <div class="input-group"><label class="input-label">اسم الأب</label><div class="elite-input-box"><input type="text" id="father-name" class="elite-input" placeholder="الأب"></div></div>
+        <div class="input-group"><label class="input-label">اسم الجد</label><div class="elite-input-box"><input type="text" id="grand-name" class="elite-input" placeholder="الجد"></div></div>
+
+        <div class="input-group">
+            <label class="input-label">تاريخ الميلاد</label>
+            <div class="dob-grid">
+                <select id="dob-day" class="elite-select">
+                    <option value="">يوم</option>
+                    <script>for(let i=1;i<=31;i++) document.write(`<option value="${i}">${i}</option>`);</script>
+                </select>
+                <select id="dob-month" class="elite-select">
+                    <option value="">شهر</option>
+                    <script>
+                        const ms = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+                        ms.forEach((m, i) => document.write(`<option value="${i+1}">${m}</option>`));
+                    </script>
+                </select>
+                <select id="dob-year" class="elite-select">
+                    <option value="">سنة</option>
+                    <script>
+                        const yr = new Date().getFullYear();
+                        for(let i=yr;i>=1950;i--) document.write(`<option value="${i}">${i}</option>`);
+                    </script>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label class="input-label">معرف الحساب ID</label>
+            <div class="elite-input-box">
+                <input type="text" id="id-val" class="elite-input" value="1758740" readonly style="color:var(--gold); font-weight:bold;">
+                <button class="copy-btn" onclick="copyID()">نسخ ID</button>
+            </div>
+        </div>
+
+        <div class="save-container"><button class="save-btn" onclick="saveData()">حفظ التغييرات النهائية</button></div>
+    </div>
+
+    <div id="cropper-modal">
+        <div class="cropper-wrapper"><img id="image-to-crop" style="display: block; max-width: 100%;"><div class="circle-mask"></div></div>
+        <div class="crop-footer"><button class="c-btn" onclick="closeModal()">إلغاء</button><button class="c-btn" id="crop-now" style="color:var(--gold);">اختيار</button></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        let cropper;
+        const fileInput = document.getElementById('img-upload');
+        const image = document.getElementById('image-to-crop');
+        const modal = document.getElementById('cropper-modal');
+        const displayImg = document.getElementById('profile-display');
+        const defaultIcon = document.getElementById('profile-default-icon');
+
+        function toggleAvatar(hasPhoto) {
+            displayImg.style.display = hasPhoto ? 'block' : 'none';
+            defaultIcon.style.display = hasPhoto ? 'none' : 'block';
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    image.src = event.target.result;
+                    modal.style.display = 'flex';
+                    if (cropper) cropper.destroy();
+                    setTimeout(() => {
+                        cropper = new Cropper(image, {
+                            aspectRatio: 1, viewMode: 1, dragMode: 'move',
+                            guides: false, center: false, highlight: false, background: false,
+                            cropBoxMovable: false, cropBoxResizable: false,
+                            ready() {
+                                const containerData = cropper.getContainerData();
+                                cropper.setCropBoxData({ left: (containerData.width - 280) / 2, top: (containerData.height - 280) / 2, width: 280, height: 280 });
+                            }
+                        });
+                    }, 100);
+                }; reader.readAsDataURL(files[0]);
+            }
+        });
+
+        document.getElementById('crop-now').addEventListener('click', () => {
+            const canvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
+            const result = canvas.toDataURL('image/jpeg', 0.8);
+            displayImg.src = result; localStorage.setItem('userAvatar', result);
+            toggleAvatar(true); closeModal();
+        });
+
+        function closeModal() { modal.style.display = 'none'; fileInput.value = ""; if (cropper) cropper.destroy(); }
+        
+        function removePhoto() { 
+            Swal.fire({
+                title: 'هل تريد حذف الصورة؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff3333',
+                cancelButtonColor: '#333',
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء',
+                background: '#030008',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('userAvatar');
+                    toggleAvatar(false);
+                    Swal.fire({title:'تم الحذف', icon:'success', background:'#030008', color:'#fff', timer:1000, showConfirmButton:false});
+                }
+            });
+        }
+
+        function copyID() { navigator.clipboard.writeText("1758740"); Swal.fire({ icon: 'success', title: 'تم النسخ', background: '#030008', color: '#fff', timer: 1000, showConfirmButton: false }); }
+
+        const pressArea = document.getElementById('long-press-area');
+        let pressTimer;
+        pressArea.addEventListener('touchstart', () => {
+            pressTimer = window.setTimeout(() => {
+                Swal.fire({
+                    title: 'خيارات الصورة',
+                    background: '#030008', color: '#fff',
+                    showDenyButton: true, showCancelButton: true,
+                    confirmButtonText: 'تغيير الصورة', denyButtonText: 'حذف الصورة', cancelButtonText: 'إلغاء',
+                    confirmButtonColor: '#7d2ae8', denyButtonColor: '#ff3333'
+                }).then((result) => {
+                    if (result.isConfirmed) fileInput.click();
+                    else if (result.isDenied) removePhoto();
+                });
+            }, 800);
+        });
+        pressArea.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+        function saveData() {
+            const fn = document.getElementById('first-name').value;
+            const fa = document.getElementById('father-name').value;
+            const gn = document.getElementById('grand-name').value;
+            localStorage.setItem('firstName', fn); localStorage.setItem('fatherName', fa); localStorage.setItem('grandName', gn);
+            localStorage.setItem('dobDay', document.getElementById('dob-day').value);
+            localStorage.setItem('dobMonth', document.getElementById('dob-month').value);
+            localStorage.setItem('dobYear', document.getElementById('dob-year').value);
+            Swal.fire({ icon: 'success', title: 'تم الحفظ بنجاح', background: '#030008', color: '#fff', timer: 1500, showConfirmButton: false }).then(() => { location.reload(); });
+        }
+
+        window.onload = function() {
+            document.getElementById('first-name').value = localStorage.getItem('firstName') || '';
+            document.getElementById('father-name').value = localStorage.getItem('fatherName') || '';
+            document.getElementById('grand-name').value = localStorage.getItem('grandName') || '';
+            document.getElementById('dob-day').value = localStorage.getItem('dobDay') || '';
+            document.getElementById('dob-month').value = localStorage.getItem('dobMonth') || '';
+            document.getElementById('dob-year').value = localStorage.getItem('dobYear') || '';
+            const fn = localStorage.getItem('firstName') || '', fa = localStorage.getItem('fatherName') || '', gn = localStorage.getItem('grandName') || '';
+            if(fn) document.getElementById('view-full-name').innerText = `${fn} ${fa} ${gn}`;
+            if(localStorage.getItem('userAvatar')) { displayImg.src = localStorage.getItem('userAvatar'); toggleAvatar(true); } else { toggleAvatar(false); }
+        }
+    </script>
+</body>
+</html>

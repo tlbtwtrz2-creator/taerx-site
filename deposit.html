@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>شحن الرصيد - TAERX ELITE</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #030008; --accent: #7d2ae8; --gold: #ffcc00; 
+            --green: #00ff88; --glass: rgba(255, 255, 255, 0.03);
+            --laser: rgba(125, 42, 232, 0.3);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background-color: var(--bg); color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 50% -20%, #1a0b3c, #030008);
+            min-height: 100vh; padding: 20px 15px;
+        }
+
+        /* الهيدر */
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 30px; padding: 0 5px;
+        }
+        .back-btn {
+            width: 45px; height: 45px; border-radius: 15px;
+            background: var(--glass); border: 1px solid var(--laser);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .back-btn:active { transform: scale(0.85); box-shadow: 0 0 15px var(--accent); }
+        .page-title { font-size: 22px; font-weight: 900; }
+
+        /* خانة إدخال المبلغ */
+        .amount-section {
+            background: linear-gradient(145deg, rgba(125, 42, 232, 0.1), rgba(0,0,0,0.6));
+            border: 1px solid var(--laser); border-radius: 35px;
+            padding: 30px 20px; text-align: center; margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .input-label { font-size: 12px; color: var(--gold); font-weight: 900; letter-spacing: 2px; margin-bottom: 15px; display: block; }
+        .amount-input-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .amount-input-wrap span { font-size: 40px; font-weight: 900; color: var(--accent); }
+        .deposit-input {
+            background: none; border: none; color: #fff; font-size: 45px; font-weight: 900;
+            width: 150px; text-align: center; border-bottom: 2px solid var(--laser);
+        }
+
+        /* خيارات الدفع (تلقائية) */
+        .payment-methods { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .method-card {
+            background: var(--glass); border: 1px solid var(--laser);
+            border-radius: 25px; padding: 20px; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: 0.2s;
+        }
+        .method-card:active { transform: scale(0.96); background: rgba(125, 42, 232, 0.1); border-color: var(--accent); }
+        
+        .m-info { display: flex; align-items: center; gap: 15px; }
+        .m-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .zain { background: #ffcc00; color: #000; } /* زين كاش */
+        .asia { background: #ff0000; color: #fff; } /* آسيا حوالة */
+
+        .m-name { font-weight: 900; font-size: 16px; }
+        .m-status { font-size: 11px; color: var(--green); font-weight: bold; }
+
+        /* زر التأكيد النهائي */
+        .confirm-deposit-btn {
+            background: linear-gradient(135deg, var(--accent), #5a1faf);
+            color: #fff; border: none; height: 65px; border-radius: 25px;
+            width: 100%; margin-top: 40px; font-weight: 900; font-size: 18px;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(125, 42, 232, 0.3);
+            transition: 0.2s;
+        }
+        .confirm-deposit-btn:active { transform: scale(0.95); box-shadow: 0 0 20px var(--accent); }
+
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <div class="page-title">شحن الرصيد</div>
+        <button class="back-btn" onclick="window.location.href='wallet.html'"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+
+    <div class="amount-section">
+        <span class="input-label">أدخل مبلغ الشحن</span>
+        <div class="amount-input-wrap">
+            <span>$</span>
+            <input type="number" class="deposit-input" placeholder="0.00" id="depositAmount">
+        </div>
+    </div>
+
+    <div class="payment-methods">
+        <div class="method-card" onclick="selectMethod('Zain Cash')">
+            <div class="m-info">
+                <div class="m-icon zain"><i class="fa-solid fa-z"></i></div>
+                <div>
+                    <div class="m-name">Zain Cash - زين كاش</div>
+                    <div class="m-status">دفع تلقائي • فوري</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-circle-check" style="color: var(--accent); font-size: 20px;"></i>
+        </div>
+
+        <div class="method-card" onclick="selectMethod('AsiaHawala')">
+            <div class="m-info">
+                <div class="m-icon asia"><i class="fa-solid fa-a"></i></div>
+                <div>
+                    <div class="m-name">AsiaHawala - آسيا حوالة</div>
+                    <div class="m-status">دفع تلقائي • فوري</div>
+                </div>
+            </div>
+            <i class="fa-regular fa-circle" style="color: rgba(255,255,255,0.2); font-size: 20px;"></i>
+        </div>
+    </div>
+
+    <button class="confirm-deposit-btn" onclick="processDeposit()">
+        تأكيد عملية الدفع
+    </button>
+
+    <script>
+        function selectMethod(method) {
+            // كود برمجي لتحديد الطريقة وتغيير شكل أيقونة الصح
+            console.log("Selected: " + method);
+        }
+
+        function processDeposit() {
+            let val = document.getElementById('depositAmount').value;
+            if(val > 0) {
+                alert('جاري توجيهك لبوابة الدفع لشحن $' + val);
+                // هنا يتم الربط مع API بوابة الدفع لاحقاً
+            } else {
+                alert('يرجى إدخال مبلغ صحيح');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>الإعدادات - TAERX ELITE</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #030008; --accent: #7d2ae8; --gold: #ffcc00; 
+            --red: #ff4444; --laser-border: rgba(125, 42, 232, 0.4);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background-color: var(--bg); color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 50% -20%, #1a0b3c, #030008);
+            min-height: 100vh; padding: 20px 15px;
+        }
+
+        /* الهيدر وزر الرجوع */
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 35px; padding: 0 5px;
+        }
+        .back-btn {
+            width: 45px; height: 45px; border-radius: 15px;
+            background: rgba(125, 42, 232, 0.1); border: 1px solid var(--accent);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; cursor: pointer; transition: transform 0.1s;
+        }
+        .back-btn:active { transform: scale(0.9); }
+        .page-title { font-size: 24px; font-weight: 900; letter-spacing: 1px; }
+
+        /* الأقسام والقوائم */
+        .settings-section { margin-bottom: 30px; }
+        .section-label { 
+            font-size: 12px; color: var(--accent); font-weight: 900; 
+            margin-right: 15px; margin-bottom: 10px; text-transform: uppercase;
+            letter-spacing: 2px; display: block;
+        }
+
+        .settings-list {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--laser-border);
+            border-radius: 30px; overflow: hidden;
+        }
+
+        .setting-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 20px; border-bottom: 1px solid rgba(125, 42, 232, 0.1);
+            cursor: pointer; transition: background 0.2s, transform 0.1s;
+        }
+        .setting-item:last-child { border-bottom: none; }
+        
+        /* تأثير الانداس */
+        .setting-item:active { transform: scale(0.98); background: rgba(125, 42, 232, 0.08); }
+
+        .item-info { display: flex; align-items: center; gap: 15px; }
+        .item-icon {
+            width: 38px; height: 38px; border-radius: 12px;
+            background: rgba(125, 42, 232, 0.15); display: flex;
+            align-items: center; justify-content: center; font-size: 18px;
+            color: var(--accent); border: 1px solid rgba(125, 42, 232, 0.2);
+        }
+        .item-text { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.9); }
+
+        /* مفاتيح التبديل (Switch) */
+        .switch {
+            width: 45px; height: 24px; background: rgba(255,255,255,0.1);
+            border-radius: 20px; position: relative; transition: 0.3s;
+        }
+        .switch.active { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .switch::after {
+            content: ''; position: absolute; width: 18px; height: 18px;
+            background: #fff; border-radius: 50%; top: 3px; right: 3px;
+            transition: 0.3s;
+        }
+        .switch.active::after { right: 24px; }
+
+        /* زر الخروج الفخم */
+        .logout-btn {
+            background: rgba(255, 68, 68, 0.05); border: 1px solid rgba(255, 68, 68, 0.2);
+            color: var(--red); margin-top: 10px;
+        }
+        .logout-btn .item-icon { background: rgba(255, 68, 68, 0.1); color: var(--red); border-color: rgba(255, 68, 68, 0.2); }
+
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <div class="page-title">ضبط النظام</div>
+        <button class="back-btn" onclick="window.location.href='login.html'"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+
+    <div class="settings-section">
+        <span class="section-label">إعدادات الحساب</span>
+        <div class="settings-list">
+            <div class="setting-item" onclick="location.href='profile_edit.html'">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fa-solid fa-user-pen"></i></div>
+                    <div class="item-text">تعديل الملف الشخصي</div>
+                </div>
+                <i class="fa-solid fa-angle-left" style="opacity: 0.3;"></i>
+            </div>
+            <div class="setting-item" onclick="location.href='wallet.html'">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="item-text">إدارة المحفظة</div>
+                </div>
+                <i class="fa-solid fa-angle-left" style="opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <span class="section-label">التنبيهات</span>
+        <div class="settings-list">
+            <div class="setting-item" onclick="toggleSwitch(this)">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fa-solid fa-bell"></i></div>
+                    <div class="item-text">إشعارات البطولات</div>
+                </div>
+                <div class="switch active"></div>
+            </div>
+            <div class="setting-item" onclick="toggleSwitch(this)">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fa-solid fa-volume-high"></i></div>
+                    <div class="item-text">أصوات التفاعل</div>
+                </div>
+                <div class="switch active"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <span class="section-label">أخرى</span>
+        <div class="settings-list">
+            <div class="setting-item" onclick="location.href='support.html'">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fa-solid fa-headset"></i></div>
+                    <div class="item-text">الدعم الفني</div>
+                </div>
+                <i class="fa-solid fa-angle-left" style="opacity: 0.3;"></i>
+            </div>
+            <div class="setting-item logout-btn" onclick="confirmLogout()">
+                <div class="item-info">
+                    <div class="item-icon"><i class="fa-solid fa-right-from-bracket"></i></div>
+                    <div class="item-text">تسجيل الخروج</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // دالة تبديل المفاتيح (Switch)
+        function toggleSwitch(element) {
+            const sw = element.querySelector('.switch');
+            sw.classList.toggle('active');
+        }
+
+        // دالة تأكيد الخروج (سهلة الربط مع السيشن لاحقاً)
+        function confirmLogout() {
+            if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

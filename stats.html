@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>أساطير النخبة - TAERX ELITE</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #030008; --accent: #7d2ae8; --gold: #ffcc00; 
+            --silver: #e0e0e0; --bronze: #cd7f32; --green: #00ff88;
+            --glass: rgba(255, 255, 255, 0.03);
+            --laser: rgba(125, 42, 232, 0.3);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background-color: var(--bg); color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 50% -20%, #1a0b3c, #030008);
+            min-height: 100vh; padding: 25px 15px; padding-bottom: 120px;
+        }
+
+        /* الهيدر */
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+        
+        /* زر الرجوع المطور بلمسة فخمة */
+        .back-btn {
+            width: 48px; height: 48px; border-radius: 18px;
+            background: rgba(125, 42, 232, 0.1); border: 1.5px solid var(--accent);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(125, 42, 232, 0.2);
+        }
+        .back-btn:active { 
+            transform: scale(0.8); background: var(--accent);
+            box-shadow: 0 0 25px var(--accent), inset 0 0 10px rgba(255,255,255,0.5);
+            border-color: #fff;
+        }
+        .back-btn::after {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            border-radius: 18px; border: 1px solid var(--accent);
+            opacity: 0.5; animation: btnPulse 2s infinite;
+        }
+        @keyframes btnPulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.4); opacity: 0; } }
+
+        .page-title { font-size: 26px; font-weight: 900; letter-spacing: 1px; }
+
+        /* منصة التتويج الملكية */
+        .premium-podium {
+            display: flex; justify-content: center; align-items: flex-end;
+            gap: 10px; margin-bottom: 50px; padding-top: 25px;
+        }
+        .podium-card {
+            background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.8) 100%);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 25px;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 15px 5px; position: relative; transition: 0.2s;
+            backdrop-filter: blur(10px);
+        }
+        .p-rank-1 { order: 2; transform: scale(1.18); z-index: 10; width: 115px; border-color: var(--gold); }
+        .p-rank-2 { order: 1; width: 95px; border-color: var(--silver); }
+        .p-rank-3 { order: 3; width: 95px; border-color: var(--bronze); }
+
+        .avatar-frame {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 3px solid transparent; background: #111;
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .p-rank-1 .avatar-frame { border-color: var(--gold); box-shadow: 0 0 25px rgba(255, 204, 0, 0.4); width: 75px; height: 75px; }
+        .p-rank-2 .avatar-frame { border-color: var(--silver); }
+        .p-rank-3 .avatar-frame { border-color: var(--bronze); }
+
+        .crown-icon { position: absolute; top: -18px; font-size: 24px; color: var(--gold); filter: drop-shadow(0 0 8px var(--gold)); }
+        .p-name { font-size: 12px; font-weight: 900; margin-top: 10px; color: #fff; text-align: center; }
+
+        .p-earn-pill {
+            display: flex; align-items: center; gap: 4px; margin-top: 6px;
+            background: rgba(0, 255, 136, 0.1); padding: 2px 10px; border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        /* قائمة الـ 25 بطل المدمجة */
+        .heroes-list { display: flex; flex-direction: column; gap: 15px; }
+        .hero-strip {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(125,42,232,0.05) 100%);
+            border: 1px solid var(--laser); border-radius: 25px;
+            padding: 10px 15px; display: flex; align-items: center; justify-content: space-between;
+            position: relative; transition: 0.2s; cursor: pointer; height: 75px;
+        }
+        .hero-strip:active { transform: scale(0.97); border-color: var(--accent); background: rgba(125,42,232,0.1); }
+
+        .hero-right-part { display: flex; align-items: center; gap: 12px; }
+        .h-rank-tag { font-size: 18px; font-weight: 900; color: rgba(255,255,255,0.15); width: 25px; }
+        .h-img-box {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: #111; border: 2px solid var(--laser);
+            display: flex; align-items: center; justify-content: center; color: var(--accent);
+        }
+        .h-details { display: flex; flex-direction: column; }
+        .h-name-txt { font-size: 15px; font-weight: 800; color: #fff; }
+        .h-wins-txt { font-size: 11px; color: var(--gold); font-weight: bold; opacity: 0.8; }
+
+        .hero-left-part {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 18px; padding: 8px 15px; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.1);
+        }
+        .earn-val-txt { color: var(--green); font-size: 16px; font-weight: 900; text-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <div class="page-title">أساطير النخبة</div>
+        <button class="back-btn" onclick="window.location.href='login.html'"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+
+    <div class="premium-podium">
+        <div class="podium-card p-rank-2">
+            <div class="avatar-frame"><i class="fa-solid fa-user"></i></div>
+            <div class="p-name">أحمد علي</div>
+            <div class="p-earn-pill">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.97 0-1.8 1.39-3.06 3.11-3.47V4h2.67v1.94c1.76.31 2.85 1.53 3.01 3.17h-1.99c-.14-1.19-.98-1.55-2.05-1.55-1.12 0-2.26.44-2.26 1.61 0 .83.68 1.43 2.66 1.91 2.44.59 4.19 1.7 4.19 4.25 0 1.79-1.34 2.94-3.13 3.33z"/></svg>
+                <span style="color:var(--green); font-size:11px; font-weight:900;">$180</span>
+            </div>
+        </div>
+        <div class="podium-card p-rank-1">
+            <i class="fa-solid fa-crown crown-icon"></i>
+            <div class="avatar-frame"><i class="fa-solid fa-user" style="font-size: 25px;"></i></div>
+            <div class="p-name">محمد زكو</div>
+            <div class="p-earn-pill" style="background:rgba(0,255,136,0.2);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.97 0-1.8 1.39-3.06 3.11-3.47V4h2.67v1.94c1.76.31 2.85 1.53 3.01 3.17h-1.99c-.14-1.19-.98-1.55-2.05-1.55-1.12 0-2.26.44-2.26 1.61 0 .83.68 1.43 2.66 1.91 2.44.59 4.19 1.7 4.19 4.25 0 1.79-1.34 2.94-3.13 3.33z"/></svg>
+                <span style="color:var(--green); font-size:13px; font-weight:900;">$250</span>
+            </div>
+        </div>
+        <div class="podium-card p-rank-3">
+            <div class="avatar-frame"><i class="fa-solid fa-user"></i></div>
+            <div class="p-name">علي القناص</div>
+            <div class="p-earn-pill">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.97 0-1.8 1.39-3.06 3.11-3.47V4h2.67v1.94c1.76.31 2.85 1.53 3.01 3.17h-1.99c-.14-1.19-.98-1.55-2.05-1.55-1.12 0-2.26.44-2.26 1.61 0 .83.68 1.43 2.66 1.91 2.44.59 4.19 1.7 4.19 4.25 0 1.79-1.34 2.94-3.13 3.33z"/></svg>
+                <span style="color:var(--green); font-size:11px; font-weight:900;">$150</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="heroes-list" id="heroesContainer"></div>
+
+    <script src="nav.js"></script>
+    <script>
+        const heroesData = [
+            { name: "ياسر العراقي", wins: 14, earn: 140 }, { name: "فهد الليث", wins: 12, earn: 120 },
+            { name: "كريم شادو", wins: 11, earn: 110 }, { name: "مصطفى دراغون", wins: 10, earn: 100 },
+            { name: "سجاد هيرو", wins: 9, earn: 90 }, { name: "حيدر جوكر", wins: 8, earn: 80 },
+            { name: "عباس بطل", wins: 8, earn: 80 }, { name: "باسم القائد", wins: 7, earn: 70 },
+            { name: "عمر الصقر", wins: 6, earn: 60 }, { name: "زيد البركان", wins: 5, earn: 50 },
+            { name: "مرتضى تورنيدو", wins: 5, earn: 50 }, { name: "نور النجم", wins: 4, earn: 40 },
+            { name: "حسين الرعد", wins: 4, earn: 40 }, { name: "سلام زلزال", wins: 3, earn: 30 },
+            { name: "جعفر البرق", wins: 3, earn: 30 }, { name: "رائد الذئب", wins: 2, earn: 20 },
+            { name: "علاء النمر", wins: 2, earn: 20 }, { name: "مهدي الفارس", wins: 2, earn: 20 },
+            { name: "حمزة الأسد", wins: 1, earn: 10 }, { name: "سيف النصر", wins: 1, earn: 10 },
+            { name: "قصي القوة", wins: 1, earn: 10 }, { name: "جاسم المدرع", wins: 1, earn: 10 }
+        ];
+
+        function render() {
+            const container = document.getElementById('heroesContainer');
+            container.innerHTML = heroesData.map((h, i) => `
+                <div class="hero-strip">
+                    <div class="hero-right-part">
+                        <div class="h-rank-tag">${i + 4}</div>
+                        <div class="h-img-box"><i class="fa-solid fa-user"></i></div>
+                        <div class="h-details"><div class="h-name-txt">${h.name}</div><div class="h-wins-txt">${h.wins} فوز اليوم</div></div>
+                    </div>
+                    <div class="hero-left-part">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--green)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.97 0-1.8 1.39-3.06 3.11-3.47V4h2.67v1.94c1.76.31 2.85 1.53 3.01 3.17h-1.99c-.14-1.19-.98-1.55-2.05-1.55-1.12 0-2.26.44-2.26 1.61 0 .83.68 1.43 2.66 1.91 2.44.59 4.19 1.7 4.19 4.25 0 1.79-1.34 2.94-3.13 3.33z"/></svg>
+                        <div class="earn-val-txt">$${h.earn.toFixed(2)}</div>
+                    </div>
+                </div>`).join('');
+        }
+        window.onload = render;
+    </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TAERX ELITE | رادار المزامنة</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #030008; 
+            --accent: #7d2ae8; 
+            --gold: #ffcc00; 
+            --red: #ff3333;
+            --green: #00ff88;
+            --laser-border: rgba(125, 42, 232, 0.4);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background-color: var(--bg); color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 50% 50%, #1a0b3c, #030008);
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* الهيدر */
+        .header-lobby {
+            padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(3, 0, 8, 0.85); backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--laser-border); z-index: 100; height: 65px;
+        }
+
+        .exit-btn {
+            background: rgba(255, 51, 51, 0.05); color: var(--red);
+            border: 1px solid rgba(255, 51, 51, 0.3); padding: 8px 15px;
+            border-radius: 12px; font-size: 11px; font-weight: 900; cursor: pointer;
+        }
+
+        .championship-title {
+            font-weight: 900; font-size: 14px; color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.3); text-align: center; flex: 1;
+        }
+
+        .radar-mini {
+            width: 35px; height: 35px; border: 1.5px solid rgba(0, 255, 136, 0.1);
+            border-radius: 50%; position: relative; flex-shrink: 0;
+        }
+        .radar-mini::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-top: 2.5px solid var(--green); border-radius: 50%;
+            filter: drop-shadow(0 0 5px var(--green)); animation: rotateRadar 1.5s linear infinite;
+        }
+        @keyframes rotateRadar { 100% { transform: rotate(360deg); } }
+
+        /* شبكة المتسابقين */
+        .war-room-grid {
+            flex: 1; display: grid; grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr); gap: 7px; padding: 10px 12px;
+            max-width: 500px; margin: 0 auto; width: 100%; align-content: center;
+        }
+
+        .seat-cell {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: 0.4s; height: 88px;
+        }
+
+        .contestant-num { font-size: 8px; color: rgba(255,255,255,0.2); margin-bottom: 4px; font-weight: bold; }
+        
+        .active .s-avatar { display: block; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 8px var(--gold); object-fit: cover; }
+        .placeholder-icon { color: rgba(255,255,255,0.03); font-size: 18px; }
+        .active .placeholder-icon { display: none; }
+
+        .s-info { margin-top: 5px; text-align: center; width: 100%; line-height: 1.2; }
+        .s-name { font-size: 9px; font-weight: 900; color: #fff; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .s-father { font-size: 8px; font-weight: bold; color: var(--gold); display: block; }
+
+        /* الفوتر */
+        .lobby-footer {
+            padding: 12px 10px 35px 10px; background: rgba(10, 5, 20, 0.98);
+            border-top: 2px solid var(--accent); text-align: center;
+        }
+        .counter-text { font-size: 20px; font-weight: 900; }
+        .counter-text span { color: var(--gold); }
+        .status-msg { font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 6px; font-weight: 900; letter-spacing: 0.5px; }
+
+        /* النوافذ المنبثقة */
+        .warning-popup { background: rgba(15, 5, 5, 0.98) !important; border: 2px solid var(--red) !important; border-radius: 35px !important; backdrop-filter: blur(20px); }
+        .warning-confirm { background: linear-gradient(135deg, var(--red), #800000) !important; border-radius: 50px !important; height: 50px !important; width: 100% !important; color: #fff !important; font-weight: 900 !important; font-size: 16px !important; border: none !important; margin-bottom: 5px; }
+        .warning-cancel { background: rgba(255, 255, 255, 0.05) !important; border-radius: 50px !important; height: 50px !important; width: 100% !important; color: #fff !important; font-weight: 900 !important; border: none !important; margin-top: 5px !important; }
+
+        .start-popup { background: radial-gradient(circle, #1a0b3c, #030008) !important; border: 2px solid var(--gold) !important; border-radius: 40px !important; }
+        .timer-svg-text { font-size: 90px; font-weight: 900; fill: none; stroke: var(--gold); stroke-width: 1.5; filter: drop-shadow(0 0 15px var(--gold)); stroke-dasharray: 500; stroke-dashoffset: 500; animation: drawLine 1s forwards cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+    </style>
+</head>
+<body>
+
+    <header class="header-lobby">
+        <button class="exit-btn" onclick="confirmExit()">انسحاب</button>
+        <div class="championship-title">بطولة TAERX الدولية</div>
+        <div class="radar-mini"></div>
+    </header>
+
+    <main class="war-room-grid" id="gridContainer"></main>
+
+    <footer class="lobby-footer">
+        <div class="counter-text">المتسابقون: <span id="playerCount">0</span> / 25</div>
+        <div id="statusMsg" class="status-msg">بانتظار اكتمال دخول الأبطال لبدء التحدي</div>
+    </footer>
+
+    <script>
+        function confirmExit() {
+            Swal.fire({
+                customClass: { popup: 'warning-popup', confirmButton: 'warning-confirm', cancelButton: 'warning-cancel' },
+                background: 'transparent', buttonsStyling: false,
+                html: `
+                    <div style="padding: 10px; text-align: center;">
+                        <div style="color: var(--red); font-size: 40px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--red));">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <h2 style="color: #fff; font-weight: 900; margin: 0; font-size: 20px;">تأكيد الانسحاب النهائي</h2>
+                        <div style="background: rgba(255,51,51,0.1); border: 1px solid rgba(255,51,51,0.2); padding: 15px; border-radius: 20px; margin: 20px 0;">
+                            <p style="color: #ff8888; font-size: 13px; font-weight: 900; margin: 0;">تنبيه: بمجرد خروجك الآن ستفقد حقك في البطولة ولن يتم استعادة مبالغ الاشتراك نهائياً.</p>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true, confirmButtonText: 'تأكيد الانسحاب وخسارة الرصيد', cancelButtonText: 'البقاء في البطولة'
+            }).then((result) => { if (result.isConfirmed) window.location.replace('login.html'); });
+        }
+
+        const gridContainer = document.getElementById('gridContainer');
+        const playerCount = document.getElementById('playerCount');
+        const statusMsg = document.getElementById('statusMsg');
+        let playersJoined = 0;
+
+        // توليد الـ 25 مقعداً
+        for (let i = 0; i < 25; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'seat-cell';
+            cell.id = `seat-${i}`;
+            cell.innerHTML = `
+                <div class="contestant-num">مقعد ${i+1}</div>
+                <div class="placeholder-icon"><i class="fa-solid fa-user-lock"></i></div>
+                <img class="s-avatar" id="img-${i}" src="">
+                <div class="s-info">
+                    <span class="s-name" id="name-${i}">---</span>
+                    <span class="s-father" id="father-${i}">---</span>
+                </div>
+            `;
+            gridContainer.appendChild(cell);
+        }
+
+        // دالة ربط البيانات (API/Socket)
+        function seatPlayer(firstName, fatherName, imgUrl) {
+            if (playersJoined < 25) {
+                const cell = document.getElementById(`seat-${playersJoined}`);
+                document.getElementById(`name-${playersJoined}`).innerText = firstName;
+                document.getElementById(`father-${playersJoined}`).innerText = fatherName;
+                const imgTag = document.getElementById(`img-${playersJoined}`);
+                imgTag.src = imgUrl;
+                imgTag.onerror = function() { this.src = 'https://via.placeholder.com/150/7d2ae8/ffffff?text=User'; };
+                
+                cell.classList.add('active');
+                playersJoined++;
+                playerCount.innerText = playersJoined;
+                
+                if (playersJoined === 25) {
+                    statusMsg.innerText = "اكتمل دخول الأبطال! تبدأ المنافسة الآن...";
+                    statusMsg.style.color = "var(--green)";
+                    startFinalCountdown();
+                }
+            }
+        }
+
+        function startFinalCountdown() {
+            let timer = 3;
+            Swal.fire({
+                customClass: { popup: 'start-popup' }, background: 'transparent', showConfirmButton: false, allowOutsideClick: false,
+                html: `
+                    <div style="padding: 20px; text-align: center;">
+                        <h1 style="color: #fff; font-weight: 900; font-size: 24px; margin-bottom: 20px;">كُن مستعداً للبدء</h1>
+                        <svg width="160" height="160" viewBox="0 0 100 100">
+                            <text x="50" y="75" text-anchor="middle" class="timer-svg-text" id="svg-num">3</text>
+                        </svg>
+                        <div style="color: var(--green); font-weight: 900; font-size: 12px; letter-spacing: 3px; margin-top: 15px;">INITIALIZING COMPETITION</div>
+                    </div>
+                `
+            });
+
+            const countdown = setInterval(() => {
+                timer--;
+                const svgNum = document.getElementById('svg-num');
+                if (svgNum) {
+                    svgNum.textContent = timer;
+                    svgNum.style.animation = 'none';
+                    setTimeout(() => { svgNum.style.animation = 'drawLine 0.8s forwards'; }, 20);
+                }
+                if (timer === 0) {
+                    clearInterval(countdown);
+                    window.location.href = 'quiz.html';
+                }
+            }, 1000);
+        }
+
+        // محاكاة دخول (للاختبار فقط) - احذفها عند الربط بالسيرفر
+        let count = 0;
+        const demo = setInterval(() => {
+            if (count < 25) { 
+                seatPlayer("متسابق", "العراقي", `https://i.pravatar.cc/150?u=${count}`); 
+                count++; 
+            } else clearInterval(demo);
+        }, 800);
+    </script>
+</body>
+</html>

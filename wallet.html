@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>محفظة النخبة - TAERX ELITE</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #030008; --accent: #7d2ae8; --gold: #ffcc00; 
+            --green: #00ff88; --red: #ff4444;
+            --glass: rgba(255, 255, 255, 0.03);
+            --laser: rgba(125, 42, 232, 0.3);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background-color: var(--bg); color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 50% -20%, #1a0b3c, #030008);
+            min-height: 100vh; padding: 20px 15px;
+        }
+
+        /* الهيدر */
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px; padding: 0 5px;
+        }
+        .back-btn {
+            width: 45px; height: 45px; border-radius: 15px;
+            background: var(--glass); border: 1px solid var(--laser);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .back-btn:active { transform: scale(0.85); box-shadow: 0 0 15px var(--accent); }
+        .page-title { font-size: 22px; font-weight: 900; letter-spacing: 1px; }
+
+        /* خانة الرصيد (حجم أصغر وأفخم) */
+        .balance-container {
+            background: linear-gradient(145deg, rgba(125, 42, 232, 0.1), rgba(0,0,0,0.6));
+            border: 1px solid var(--laser); border-radius: 35px;
+            padding: 25px 15px; text-align: center; margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+        }
+        .balance-label { font-size: 11px; color: var(--gold); font-weight: 900; letter-spacing: 3px; margin-bottom: 8px; display: block; opacity: 0.8; }
+        .balance-val { font-size: 42px; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--accent); }
+
+        /* أزرار الشحن والسحب (شكل زجاجي فخم جداً) */
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 35px; }
+        
+        .nav-card {
+            background: var(--glass); border: 1px solid var(--laser);
+            border-radius: 25px; padding: 20px 10px; text-align: center;
+            cursor: pointer; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+        .nav-card:active { transform: scale(0.92); background: rgba(125, 42, 232, 0.1); border-color: var(--accent); }
+
+        .nav-icon {
+            width: 45px; height: 45px; border-radius: 15px; margin: 0 auto 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            transition: 0.3s;
+        }
+        
+        /* ألوان الأيقونات النيون */
+        .deposit-zone .nav-icon { background: rgba(0, 255, 136, 0.1); color: var(--green); box-shadow: 0 0 15px rgba(0, 255, 136, 0.2); }
+        .withdraw-zone .nav-icon { background: rgba(255, 204, 0, 0.1); color: var(--gold); box-shadow: 0 0 15px rgba(255, 204, 0, 0.2); }
+
+        .nav-label { font-size: 14px; font-weight: 900; display: block; color: rgba(255,255,255,0.9); }
+
+        /* السجل */
+        .history-head { font-size: 13px; font-weight: 900; color: var(--gold); margin-bottom: 15px; letter-spacing: 1px; padding-right: 10px; }
+        
+        .trans-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(125,42,232,0.1);
+            border-radius: 22px; padding: 15px 18px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: 0.2s;
+        }
+        .trans-card:active { transform: scale(0.97); background: rgba(125,42,232,0.05); }
+
+        .t-info { display: flex; align-items: center; gap: 12px; }
+        .t-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .in { background: rgba(0, 255, 136, 0.1); color: var(--green); }
+        .out { background: rgba(255, 68, 68, 0.1); color: var(--red); }
+
+        .t-main { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+        .t-sub { font-size: 11px; color: rgba(255,255,255,0.3); }
+        .t-amt { font-size: 16px; font-weight: 900; }
+
+    </style>
+</head>
+<body>
+
+    <div class="page-header">
+        <div class="page-title">المحفظة</div>
+        <button class="back-btn" onclick="smartBack()"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+
+    <div class="balance-container">
+        <span class="balance-label">رصيد محفظة</span>
+        <div class="balance-val">$ <span id="current-balance">80.00</span></div>
+    </div>
+
+    <div class="actions-grid">
+        <div class="nav-card deposit-zone" onclick="window.location.href='deposit.html'">
+            <div class="nav-icon"><i class="fa-solid fa-plus"></i></div>
+            <span class="nav-label">إيداع رصيد</span>
+        </div>
+
+        <div class="nav-card withdraw-zone" onclick="window.location.href='withdraw.html'">
+            <div class="nav-icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+            <span class="nav-label">سحب أرباح</span>
+        </div>
+    </div>
+
+    <div class="history-head">آخر العمليات</div>
+    <div class="history-list">
+        <div class="trans-card">
+            <div class="t-info">
+                <div class="t-icon in"><i class="fa-solid fa-download"></i></div>
+                <div><div class="t-main">إيداع</div><div class="t-sub">منذ يومين</div></div>
+            </div>
+            <div class="t-amt" style="color: var(--green);">+$50.00</div>
+        </div>
+        
+        <div class="trans-card">
+            <div class="t-info">
+                <div class="t-icon out"><i class="fa-solid fa-upload"></i></div>
+                <div><div class="t-main">سحب</div><div class="t-sub">15 مارس</div></div>
+            </div>
+            <div class="t-amt" style="color: var(--red);">-$20.00</div>
+        </div>
+    </div>
+
+    <script>
+        function smartBack() {
+            const referrer = document.referrer;
+            if (referrer.includes('settings.html')) {
+                window.location.href = 'settings.html';
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

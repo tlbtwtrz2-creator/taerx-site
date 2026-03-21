@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تحدي الـ 50 سؤال - TAERX ELITE</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg: #030008; --neon-blue: #2979ff; --neon-cyan: #00e5ff;
+            --neon-green: #00ff88; --neon-red: #ff1744; --gold: #ffcc00;
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background: radial-gradient(circle at center, #0d0421 0%, #030008 100%);
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
+            min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .header { width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .points { background: rgba(255, 204, 0, 0.1); border: 1.5px solid var(--gold); padding: 8px 15px; border-radius: 30px; color: var(--gold); font-weight: 900; }
+
+        /* إطار السؤال */
+        .q-card {
+            width: 100%; min-height: 120px; border: 2px solid var(--neon-blue); border-radius: 25px;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            text-align: center; margin-bottom: 25px; box-shadow: 0 0 20px rgba(41, 121, 255, 0.2);
+        }
+
+        /* العداد الهندسي SVG */
+        .svg-container { width: 100%; max-width: 400px; margin-bottom: 30px; }
+        svg { overflow: visible; }
+        .danger-pulse { animation: pulse 0.4s infinite alternate; }
+        @keyframes pulse { from { opacity: 1; } to { opacity: 0.6; } }
+
+        /* الخيارات */
+        .options-list { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        .opt {
+            height: 55px; border-radius: 18px; border: 2px solid rgba(41, 121, 255, 0.3);
+            background: rgba(255, 255, 255, 0.01); display: flex; align-items: center;
+            justify-content: center; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .opt.correct { border-color: var(--neon-green) !important; background: rgba(0, 255, 136, 0.1) !important; box-shadow: 0 0 20px var(--neon-green) !important; }
+        .opt.wrong { border-color: var(--neon-red) !important; background: rgba(255, 23, 68, 0.1) !important; box-shadow: 0 0 20px var(--neon-red) !important; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="points"><i class="fa-solid fa-star"></i> <span id="score">0</span></div>
+        <div id="qIndex" style="font-weight: 900; color: var(--neon-cyan);">سؤال 1 / 50</div>
+    </div>
+
+    <div class="q-card">
+        <h2 id="questionDisplay">جاري تحميل السؤال...</h2>
+    </div>
+
+    <div class="svg-container">
+        <svg id="masterSvg" viewBox="0 0 400 160">
+            <defs>
+                <filter id="neonGlow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <linearGradient id="neonGradient"><stop offset="0%" stop-color="var(--neon-blue)"/><stop offset="100%" stop-color="var(--neon-cyan)"/></linearGradient>
+            </defs>
+            <path id="chassis" d="M20,60 H80 A20,20 0 0,1 100,80 V100 A20,20 0 0,1 80,120 H20 A20,20 0 0,1 0,100 V80 A20,20 0 0,1 20,60 z M110,65 H380 A15,15 0 0,1 395,80 V100 A15,15 0 0,1 380,115 H110 A15,15 0 0,1 95,100 V80 A15,15 0 0,1 110,65 z" fill="rgba(41, 121, 255, 0.03)" stroke="var(--neon-blue)" stroke-width="1.5"/>
+            <g transform="translate(50, 90)">
+                <circle cx="0" cy="0" r="40" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="6"/>
+                <circle id="timerCircle" cx="0" cy="0" r="40" fill="none" stroke="url(#neonGradient)" stroke-width="6" stroke-dasharray="251.3" stroke-dashoffset="0" transform="rotate(-90)" style="filter: url(#neonGlow); transition: stroke-dashoffset 0.1s linear;"/>
+                <text id="timeText" cx="0" cy="0" text-anchor="middle" dy="7" font-size="28" font-weight="900" fill="white">10</text>
+            </g>
+            <g transform="translate(110, 80)">
+                <rect x="0" y="0" width="270" height="20" rx="10" fill="rgba(255, 255, 255, 0.05)"/>
+                <rect id="barFill" x="2" y="2" width="266" height="16" rx="8" fill="url(#neonGradient)" style="filter: url(#neonGlow); transition: width 0.1s linear;"/>
+            </g>
+        </svg>
+    </div>
+
+    <div class="options-list" id="optionsBox"></div>
+
+    <script>
+        // مصفوفة تحتوي على 50 سؤال (يمكنك تغييرها بسهولة أونلاين)
+        const allQuestions = [
+            { q: "ما هي عاصمة العراق؟", options: ["بغداد", "البصرة", "الموصل", "أربيل"], correct: 0 },
+            { q: "ما هو أكبر كوكب في المجموعة الشمسية؟", options: ["المريخ", "المشتري", "الأرض", "زحل"], correct: 1 },
+            { q: "من هو مخترع المصباح الكهربائي؟", options: ["نيوتن", "أينشتاين", "إديسون", "تسلا"], correct: 2 },
+            { q: "ما هي العملة الرسمية في اليابان؟", options: ["اليوان", "الين", "الدولار", "اليورو"], correct: 1 },
+            // ... أضف باقي الـ 50 سؤال هنا بنفس التنسيق
+        ];
+
+        // لتوليد 50 سؤال بسرعة للتجربة
+        for(let i=5; i<=50; i++) {
+            allQuestions.push({ q: `سؤال تجريبي رقم ${i}`, options: ["خيار 1", "خيار 2", "خيار 3", "خيار 4"], correct: 0 });
+        }
+
+        let currentQIndex = 0;
+        let score = 0;
+        let timeLeft = 100;
+        let active = true;
+
+        function loadQuestion() {
+            active = true;
+            timeLeft = 100;
+            const q = allQuestions[currentQIndex];
+            document.getElementById('questionDisplay').innerText = q.q;
+            document.getElementById('qIndex').innerText = `سؤال ${currentQIndex + 1} / 50`;
+            
+            const optionsBox = document.getElementById('optionsBox');
+            optionsBox.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'opt';
+                btn.innerText = opt;
+                btn.onclick = () => verify(btn, index === q.correct);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        const engine = setInterval(() => {
+            if (!active) return;
+            timeLeft -= 1;
+            document.getElementById('barFill').setAttribute('width', (timeLeft / 100) * 266);
+            document.getElementById('timerCircle').setAttribute('stroke-dashoffset', 251.3 - (timeLeft / 100) * 251.3);
+            document.getElementById('timeText').innerText = Math.ceil(timeLeft / 10);
+
+            if (timeLeft <= 30) document.getElementById('masterSvg').classList.add('danger-pulse');
+            if (timeLeft <= 0) { active = false; nextQ(); }
+        }, 100);
+
+        function verify(el, isCorrect) {
+            if (!active) return;
+            active = false;
+            if (isCorrect) {
+                el.classList.add('correct');
+                score += 10;
+                document.getElementById('score').innerText = score;
+            } else {
+                el.classList.add('wrong');
+            }
+            setTimeout(nextQ, 1500);
+        }
+
+        function nextQ() {
+            currentQIndex++;
+            if (currentQIndex < allQuestions.length) {
+                document.getElementById('masterSvg').classList.remove('danger-pulse');
+                loadQuestion();
+            } else {
+                alert("انتهت المسابقة! مجموع نقاطك: " + score);
+            }
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
